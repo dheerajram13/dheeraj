@@ -1,12 +1,11 @@
 [build]
   command = "npm run build"
-  publish = "build"  
+  publish = "build"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
 
 [build.environment]
-  NODE_VERSION = "16"  
+  PUBLIC_URL = "."
