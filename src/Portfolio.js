@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TrailerStyleProjectCard from './TrailerStyleProjectCard';
-import { ArrowUpRight, Briefcase, BookOpen, Award, Github, Linkedin, Globe, Mail } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Award, Github, Linkedin, Globe, Mail } from 'lucide-react';
 
 
 const animationCSS = `

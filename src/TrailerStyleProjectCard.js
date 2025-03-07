@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Github, Globe, Play, Info, X, ExternalLink, Volume2, VolumeX } from 'lucide-react';
+import { Github, Globe, Play, Info, X, Volume2, VolumeX } from 'lucide-react';
 
 const TrailerStyleProjectCard = ({ project }) => {
   // State for card expansion and video
