@@ -76,10 +76,14 @@ const TrailerStyleProjectCard = ({ project }) => {
       document.addEventListener('keydown', handleEscKey);
     }
 
+    // Capture current timeout values for cleanup
+    const currentTimeout = timeoutRef.current;
+    const currentExpandTimeout = expandTimeoutRef.current;
+
     return () => {
       document.removeEventListener('keydown', handleEscKey);
-      clearTimeout(timeoutRef.current);
-      clearTimeout(expandTimeoutRef.current);
+      clearTimeout(currentTimeout);
+      clearTimeout(currentExpandTimeout);
     };
   }, [isDetailView]);
   
