@@ -519,7 +519,7 @@ const ProjectsSection = () => {
   const projects = [
     {
       title: "Job Application Tracker",
-      period: "Jan 2025 - Present",
+      period: "Jan 2025 - Mar 2025",
       description: "Developed a job application tracking website and chrome extension to reduce job tracking time by 75% through one-click URL capture. Leveraged LLM to automate job detail extraction and storage in DB.",
       tech: ["Python", "FastAPI", "PostgreSQL", "React", "Docker", "LLM"],
       tags: ["Full Stack", "AI Integration"],
@@ -533,18 +533,318 @@ const ProjectsSection = () => {
       detailsLink: "/projects/job-tracker"
     },
     {
-      title: "LLM for Network Traffic Generation",
-      period: "Sep 2024 - Present",
-      description: "Researching synthetic network traffic generation using Large Language Models (LLMs) like GPT-4 to simulate diverse protocols and attack patterns for improved intrusion detection. Addressing challenges in existing datasets, such as 75% imbalance in benign vs. malicious traffic, to enhance the training of Network Intrusion Detection Systems (NIDS).",
-      tech: ["GPT-4", "Mininet", "Python", "Docker", "Linux"],
+      title: "Drosophila Gender Classification using ML",
+      period: "Apr 2024 - May 2024",
+      description: "Applied machine learning algorithms (KNN, Decision Trees, Logistic Regression) to classify Drosophila gender based on morphological features. Achieved 94.8% accuracy through feature engineering and hyperparameter tuning, with comprehensive model comparison and optimization.",
+      tech: ["Python", "scikit-learn", "Pandas", "NumPy", "Matplotlib", "Machine Learning"],
+      tags: ["Machine Learning", "Data Science", "Classification"],
+      image: "/ml_drosophila.png",
+      github: "https://github.com/dheerajram13/drosophila-classification",
+      detailsLink: "/projects/drosophila-classification",
+      detailedInfo: {
+        objective: "To apply and compare various machine learning algorithms for classifying Drosophila gender based on morphological and environmental features, analyzing model performance and optimization strategies.",
+        dataset: {
+          description: "Drosophila dataset containing 1,731 samples with 16 features including geographic location, environmental conditions, wing morphology, and asymmetry measurements",
+          features: ["Wing Area", "Wing Shape", "Wing Vein", "Temperature", "Geographic Location (Latitude/Longitude)", "Species", "Population"],
+          preprocessing: [
+            "Handled missing values using mean imputation for numerical features and mode for categorical features",
+            "Feature selection: Reduced from 16 to 12 columns (dropped Years-start, Year-end, Vial, Replicate)",
+            "Train-test split: 70/30"
+          ]
+        },
+        methodology: [
+          {
+            algorithm: "K-Nearest Neighbors (KNN)",
+            approach: "Distance-based classification using optimal K value",
+            optimization: "Cross-validation, feature engineering, hyperparameter tuning (optimal K=5)",
+            initialAccuracy: "56.1%",
+            finalAccuracy: "94.8%"
+          },
+          {
+            algorithm: "Decision Trees",
+            approach: "Tree-based classification with automatic feature selection",
+            optimization: "Tuned max_depth=5, min_samples_split=2, min_samples_leaf=4",
+            initialAccuracy: "91.7%",
+            finalAccuracy: "91.8%"
+          },
+          {
+            algorithm: "Logistic Regression",
+            approach: "Linear classification with regularization",
+            optimization: "Regularization parameter tuning (C parameter)",
+            initialAccuracy: "94.8%",
+            finalAccuracy: "94.8%"
+          }
+        ],
+        keyFindings: [
+          "Wing Area emerged as the most predictive feature (importance ~0.55) across all models",
+          "Physical traits (wing morphology) significantly outperformed geographic features in prediction power",
+          "KNN showed dramatic improvement (56.1% → 94.8%) with proper feature engineering, demonstrating sensitivity to feature quality",
+          "Logistic Regression achieved consistent high performance (94.8%) with minimal tuning, showing stability",
+          "Decision Trees optimal depth of 5-6 balanced complexity and generalization"
+        ],
+        results: {
+          bestModels: ["KNN (94.8%)", "Logistic Regression (94.8%)"],
+          metrics: [
+            "High ROC-AUC score of 0.99 for Logistic Regression",
+            "Excellent precision-recall balance across all optimized models",
+            "Confusion matrices showed some class imbalance in misclassification rates"
+          ]
+        },
+        challenges: [
+          "Initial low KNN accuracy (56.1%) due to irrelevant features affecting distance calculations",
+          "Decision Tree overfitting with depth > 6, requiring careful hyperparameter tuning",
+          "Feature scaling sensitivity in KNN requiring proper normalization",
+          "Class imbalance between male and female samples affecting prediction bias"
+        ],
+        insights: [
+          "Feature engineering is critical for distance-based algorithms like KNN",
+          "Model interpretability varies: Decision Trees > Logistic Regression > KNN",
+          "Computational efficiency: Logistic Regression > Decision Trees > KNN",
+          "Generalization: Proper validation essential to prevent overfitting, especially for tree-based models"
+        ],
+        futureWork: [
+          "Implement ensemble methods (Stacking Classifier, Random Forest, XGBoost)",
+          "Address class imbalance using SMOTE or class weighting",
+          "Explore feature interaction analysis",
+          "Apply dimensionality reduction techniques (PCA, t-SNE)"
+        ]
+      }
+    },
+    {
+      title: "Synthetic Traffic Generation Using LLMs",
+      period: "Sep 2024 - Mar 2025",
+      description: "Researched synthetic network traffic generation using Large Language Models (Claude, ChatGPT, Grok-3, Gemini) with LangChain to simulate network protocols (IPv4, ICMP, ARP) for improved intrusion detection. Achieved 100% accuracy with few-shot learning across multiple models, addressing dataset limitations like imbalance and outdated data in existing NIDS datasets.",
+      tech: ["Claude", "ChatGPT", "Grok-3", "Gemini", "LangChain", "Python", "Mininet", "Docker", "tcpdump"],
       tags: ["Machine Learning", "AI Research", "Network Security"],
       image: "/network_traffic.png",
       github: "https://github.com/dheerajram13/llm_for_synthetic_traffic_generation",
-      detailsLink: "/projects/network-traffic"
+      detailsLink: "/projects/network-traffic",
+      detailedInfo: {
+        objective: "To improve the effectiveness and reliability of network traffic collection by using Large Language Models to generate synthetic network data and validate it, addressing limitations in existing datasets such as UNSW_NB15 which are outdated, imbalanced, lack complexity, and have limited scalability.",
+        background: {
+          problem: "Network Intrusion Detection Systems (NIDS) rely on datasets that are outdated, imbalanced (benign vs. malicious traffic), lack complexity, and have limited scalability. These limitations affect the training and performance of intrusion detection systems.",
+          solution: "Leverage state-of-the-art Large Language Models to generate synthetic network traffic data across multiple protocols, evaluating their performance using zero-shot, one-shot, and n-shot learning paradigms."
+        },
+        methodology: [
+          {
+            approach: "Zero-Shot Learning",
+            description: "Models generate network traffic without any examples, relying solely on their pre-trained knowledge of network protocols",
+            optimization: "Evaluated baseline performance across all models using standardized prompts via LangChain",
+            accuracyRange: {
+              ipv4: "73.17% - 87.58%",
+              icmp: "0% - 100%",
+              arp: "92% - 100%"
+            },
+            topPerformers: {
+              ipv4: "Grok-3 (87.58%)",
+              icmp: "Gemini 2.5 Pro, Gemini 2.5 Flash, Grok-3 (100%)",
+              arp: "Claude, ChatGPT, Gemini 2.5 Pro, Gemini 2.5 Flash (100%)"
+            }
+          },
+          {
+            approach: "One-Shot Learning",
+            description: "Models provided with a single example before generating traffic to guide output format and field structure",
+            optimization: "Single exemplar prompt engineering through LangChain to demonstrate expected protocol field values",
+            accuracyRange: {
+              ipv4: "73.17% - 87.58%",
+              icmp: "98% - 100%",
+              arp: "95% - 100%"
+            },
+            topPerformers: {
+              ipv4: "Grok-3 (87.58%)",
+              icmp: "Claude, ChatGPT, Gemini 2, Gemini 2.5 Flash, Grok-3 (100%)",
+              arp: "Claude, ChatGPT, Gemini 2.5 Pro, Gemini 2.5 Flash (100%)"
+            },
+            improvement: "Significant ICMP improvement for ChatGPT (0% → 100%) and Gemini 2 (0% → 100%)"
+          },
+          {
+            approach: "N-Shot Learning (5 examples)",
+            description: "Models provided with five diverse examples showcasing various protocol scenarios and edge cases",
+            optimization: "Multi-example prompt engineering with diverse scenarios using LangChain for consistent delivery",
+            accuracyRange: {
+              ipv4: "78% - 100%",
+              icmp: "99% - 100%",
+              arp: "96% - 100%"
+            },
+            topPerformers: {
+              ipv4: "ChatGPT (100%)",
+              icmp: "ChatGPT, Gemini 2, Gemini 2.5 Pro, Gemini 2.5 Flash (100%)",
+              arp: "Claude, ChatGPT, Gemini 2.5 Pro, Gemini 2.5 Flash (100%)"
+            },
+            improvement: "Dramatic improvements: Claude IPv4 (73.17% → 97.58%), ChatGPT IPv4 (83.33% → 100%)",
+            anomaly: "Grok-3 IPv4 unexpectedly decreased (87.58% → 78%)"
+          }
+        ],
+        protocols: [
+          {
+            name: "IPv4 (Internet Protocol version 4)",
+            complexity: "Medium - Most challenging due to complex fields such as checksum calculation",
+            fields: "Version, IHL, Type of Service, Total Length, Identification, Flags, Fragment Offset, TTL, Protocol, Header Checksum, Source/Destination Addresses",
+            description: "IPv4 packet generation proved to be the most challenging task across all models. ChatGPT achieved perfect performance (100%) in the N-shot scenario, representing the highest accuracy among all evaluated models. Gemini 2.5 Flash demonstrated the second-best performance at 99.75%, while Claude showed remarkable learning efficiency.",
+            performanceByModel: [
+              { model: "ChatGPT", initialAccuracy: "83.33%", finalAccuracy: "100%", improvement: "+16.67%" },
+              { model: "Gemini 2.5 Flash", initialAccuracy: "79.17%", finalAccuracy: "99.75%", improvement: "+20.58%" },
+              { model: "Claude", initialAccuracy: "73.17%", finalAccuracy: "97.58%", improvement: "+24.41%", note: "Remarkable learning efficiency" },
+              { model: "Grok-3", initialAccuracy: "87.58%", finalAccuracy: "78.00%", improvement: "-9.58%", note: "Unexpected performance decrease" },
+              { model: "Gemini 2.5 Pro", initialAccuracy: "75.00%", finalAccuracy: "85.42%", improvement: "+10.42%" },
+              { model: "Gemini 2", initialAccuracy: "83.33%", finalAccuracy: "83.33%", improvement: "0%", note: "No improvement observed" }
+            ],
+            bestAccuracy: "100% (ChatGPT with N-shot learning)",
+            zeroShotRange: "73.17% - 87.58%",
+            nShotRange: "78.00% - 100%"
+          },
+          {
+            name: "ICMP (Internet Control Message Protocol)",
+            complexity: "Low - Highest overall accuracy due to limited fields and lower complexity",
+            fields: "Type, Code, Checksum, Identifier, Sequence Number",
+            description: "ICMP protocol showed the highest overall accuracy across models due to its limited fields and lower complexity. All models achieved 100% accuracy in N-shot learning, with most reaching perfect scores even in one-shot scenarios.",
+            performanceByModel: [
+              { model: "ChatGPT", initialAccuracy: "0.00%", finalAccuracy: "100%", improvement: "+100%", note: "Dramatic improvement from zero-shot" },
+              { model: "Gemini 2.5 Flash", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Gemini 2.5 Pro", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Grok-3", initialAccuracy: "100%", finalAccuracy: "99.00%", improvement: "-1%", note: "Minimal decrease" },
+              { model: "Claude", initialAccuracy: "98.00%", finalAccuracy: "99.00%", improvement: "+1%" },
+              { model: "Gemini 2", initialAccuracy: "0.00%", finalAccuracy: "100%", improvement: "+100%", note: "Dramatic improvement from zero-shot" }
+            ],
+            bestAccuracy: "100% (Multiple models achieved perfect accuracy)",
+            zeroShotRange: "0% - 100%",
+            nShotRange: "99% - 100%"
+          },
+          {
+            name: "ARP (Address Resolution Protocol)",
+            complexity: "High (for LLMs) - Complex address mapping between hardware and protocol addresses",
+            fields: "Hardware Type, Protocol Type, Hardware/Protocol Address Length, Operation, Sender/Target Hardware and Protocol Addresses",
+            description: "ARP generation showed varied performance across models. Most models maintained high accuracy (>95%) throughout all learning paradigms. ChatGPT, Claude, Gemini 2.5 Pro, and Gemini 2.5 Flash all achieved perfect 100% accuracy in N-shot learning.",
+            performanceByModel: [
+              { model: "ChatGPT", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Gemini 2.5 Flash", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Gemini 2.5 Pro", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Claude", initialAccuracy: "100%", finalAccuracy: "100%", improvement: "0%", note: "Perfect consistency" },
+              { model: "Grok-3", initialAccuracy: "95.00%", finalAccuracy: "98.00%", improvement: "+3%" },
+              { model: "Gemini 2", initialAccuracy: "92.00%", finalAccuracy: "96.00%", improvement: "+4%" }
+            ],
+            bestAccuracy: "100% (ChatGPT, Claude, Gemini 2.5 Pro, Gemini 2.5 Flash)",
+            zeroShotRange: "92% - 100%",
+            nShotRange: "96% - 100%"
+          }
+        ],
+        models: [
+          {
+            name: "ChatGPT",
+            strength: "Excellent learning from examples - achieved 100% across all protocols with 5 examples",
+            performance: "Strong improvement: IPv4 (83.33% → 100%), ICMP (0% → 100%), ARP (83.33% → 100%)"
+          },
+          {
+            name: "Gemini 2.5 Flash",
+            strength: "Outstanding N-shot learning capability with near-perfect accuracy",
+            performance: "Exceptional: IPv4 (79.17% → 99.75%), ICMP (100% consistently), ARP (100% consistently)"
+          },
+          {
+            name: "Gemini 2.5 Pro",
+            strength: "Consistent high performance across all learning paradigms",
+            performance: "Steady: IPv4 (75% → 85.42%), ICMP (100% → 100%), ARP (100% consistently)"
+          },
+          {
+            name: "Claude",
+            strength: "High zero-shot accuracy and significant N-shot improvement",
+            performance: "Progressive: IPv4 (73.17% → 97.58%), ICMP (98% → 99%), ARP (100% consistently)"
+          },
+          {
+            name: "Grok-3",
+            strength: "Best zero-shot IPv4 performance across all models",
+            performance: "Strong start: IPv4 (87.58% → 78%), ICMP (100% → 99%), ARP (95% → 98%)"
+          },
+          {
+            name: "Gemini 2",
+            strength: "Improved learning from zero-shot to N-shot for ARP protocol",
+            performance: "Gradual improvement: IPv4 (83.33% consistently), ICMP (0% → 100%), ARP (92% → 96%)"
+          }
+        ],
+        performanceTable: {
+          title: "Table 3: Results of All Models Across Different Learning Paradigms",
+          description: "Comprehensive performance comparison using LangChain for prompt orchestration showing accuracy percentages for IPv4, ICMP, and ARP protocol generation across zero-shot, one-shot, and N-shot learning scenarios.",
+          data: [
+            { model: "Claude", zeroShot: { ipv4: "73.17%", icmp: "98.00%", arp: "100.00%" }, oneShot: { ipv4: "73.17%", icmp: "100.00%", arp: "100.00%" }, nShot: { ipv4: "97.58%", icmp: "99.00%", arp: "100.00%" } },
+            { model: "ChatGPT", zeroShot: { ipv4: "83.33%", icmp: "0.00%", arp: "100.00%" }, oneShot: { ipv4: "83.33%", icmp: "100.00%", arp: "100.00%" }, nShot: { ipv4: "100.00%", icmp: "100.00%", arp: "100.00%" } },
+            { model: "Grok-3", zeroShot: { ipv4: "87.58%", icmp: "100.00%", arp: "95.00%" }, oneShot: { ipv4: "87.58%", icmp: "100.00%", arp: "97.00%" }, nShot: { ipv4: "78.00%", icmp: "99.00%", arp: "98.00%" } },
+            { model: "Gemini 2.5 Pro", zeroShot: { ipv4: "75.00%", icmp: "100.00%", arp: "100.00%" }, oneShot: { ipv4: "85.42%", icmp: "98.00%", arp: "100.00%" }, nShot: { ipv4: "85.42%", icmp: "100.00%", arp: "100.00%" } },
+            { model: "Gemini 2.5 Flash", zeroShot: { ipv4: "79.17%", icmp: "100.00%", arp: "100.00%" }, oneShot: { ipv4: "79.17%", icmp: "100.00%", arp: "100.00%" }, nShot: { ipv4: "99.75%", icmp: "100.00%", arp: "100.00%" } },
+            { model: "Gemini 2", zeroShot: { ipv4: "83.33%", icmp: "0.00%", arp: "92.00%" }, oneShot: { ipv4: "83.33%", icmp: "100.00%", arp: "95.00%" }, nShot: { ipv4: "83.33%", icmp: "100.00%", arp: "96.00%" } }
+          ]
+        },
+        experimentSetup: [
+          "Hardware: MacBook Air M1 (8GB RAM) with macOS 13.3",
+          "Virtualization: Docker image docker-ryu-mininet for running Mininet",
+          "LLM Integration: LangChain framework for prompt orchestration and model interaction",
+          "Traffic Capture: tcpdump tool in Mininet for capturing network packets",
+          "Data Extraction: JSON format for easy comparison with ground truth",
+          "Evaluation: Python script comparing LLM-generated data with real traffic from Mininet"
+        ],
+        keyFindings: [
+          "ChatGPT and Gemini 2.5 Flash both achieved perfect 100% accuracy across all protocols with N-shot learning",
+          "Gemini 2.5 Flash demonstrated the best overall N-shot performance with 99.75% IPv4 accuracy and 100% for both ICMP and ARP",
+          "ICMP protocol showed highest overall accuracy across models due to its limited fields and lower complexity",
+          "LangChain framework enabled consistent prompt engineering and efficient model interaction across all LLMs",
+          "Providing examples significantly improved model performance - N-shot learning showed substantial gains over zero-shot",
+          "Zero-shot performance varied widely by protocol: Grok-3 led with 87.58% IPv4, while ChatGPT and Gemini 2 struggled with ICMP (0%)",
+          "Claude showed remarkable improvement in N-shot learning: IPv4 (73.17% → 97.58%)",
+          "Grok-3's performance unexpectedly decreased with more examples for IPv4 (87.58% → 78%), suggesting potential overfitting to examples",
+          "All models achieved 100% ARP accuracy in zero-shot except Gemini 2 (92%) and Grok-3 (95%)",
+          "Learning efficiency demonstrated: high accuracy achieved with minimal input (1-5 examples) using structured prompts via LangChain"
+        ],
+        results: {
+          overallAccuracy: "ChatGPT and Gemini 2.5 Flash both achieved 100% accuracy across all protocols with N-shot learning",
+          bestPerformers: [
+            "ChatGPT (100% all protocols in N-shot)",
+            "Gemini 2.5 Flash (99.75% IPv4, 100% ICMP & ARP in N-shot)",
+            "Claude (97.58% IPv4, 99% ICMP, 100% ARP in N-shot)",
+            "Grok-3 (87.58% IPv4 zero-shot - highest among all models)"
+          ],
+          metrics: [
+            "5 out of 6 models achieved 100% accuracy for ICMP in N-shot learning",
+            "All models except Gemini 2 achieved >78% accuracy for IPv4 across all learning paradigms",
+            "9 out of 18 model-paradigm combinations achieved 100% ARP accuracy",
+            "Zero-shot to N-shot improvement: ChatGPT IPv4 (+16.67%), Claude IPv4 (+24.41%)",
+            "Field-level accuracy validated against ground truth from Mininet captures using LangChain-orchestrated prompts"
+          ]
+        },
+        challenges: [
+          "Checksum calculation - models initially struggled without examples",
+          "ARP protocol complexity - lower accuracy compared to IPv4 and ICMP",
+          "Format inconsistencies - some models generated hexadecimal instead of expected format",
+          "Grok's unexpected ARP performance drop with more examples (87.58% → 78%)",
+          "Balancing model capability with protocol complexity"
+        ],
+        insights: [
+          "Few-shot learning dramatically improves synthetic traffic generation accuracy for most models",
+          "LangChain framework proved essential for consistent prompt engineering and model orchestration across different LLM APIs",
+          "Protocol complexity inversely correlates with generation accuracy: ICMP (simplest) > IPv4 > ARP (most complex)",
+          "Different LLMs have varying strengths: ChatGPT and Gemini 2.5 Flash excel at N-shot learning, Grok-3 at zero-shot IPv4",
+          "Providing structured examples via LangChain prompts is critical for consistent output formats",
+          "LLMs can successfully infer protocol-specific fields with proper context and examples",
+          "Learning paradigm significantly impacts accuracy - examples make a measurable difference, except for Grok-3's anomalous IPv4 behavior",
+          "Gemini model family (2, 2.5 Pro, 2.5 Flash) showed diverse performance characteristics despite shared architecture",
+          "Zero-shot ICMP performance varies dramatically: some models achieve 100% while others score 0%"
+        ],
+        futureWork: [
+          "Extend to more complex protocols: TCP, HTTP, DNS for comprehensive coverage",
+          "Generate realistic attack traffic for diverse intrusion detection datasets",
+          "Develop a module/library to analyze network traffic patterns and predict attacks",
+          "Scale generation to larger datasets for real-world NIDS training",
+          "Investigate hybrid approaches combining multiple LLMs for optimal performance",
+          "Address Grok's ARP performance anomaly with additional examples"
+        ],
+        publication: {
+          title: "Synthetic Traffic Generation Using Large Language Models",
+          authors: "Dheeraj Srirama, Marius Portmann, Siamak Layeghy",
+          institution: "School of Electrical Engineering and Computer Science, The University of Queensland",
+          year: "2024"
+        }
+      }
     },
     {
       title: "CourseCompanion",
-      period: "2023 - 2024",
+      period: "Oct 2024 - Nov 2024",
       description: "Developed a platform for students to upload study materials, collaborate, and seek help. Featuring material management, peer connection, discussion space, and resource exchange to address challenges in managing resources and connecting with peers.",
       tech: ["React.js", "Node.js", "Express", "Firebase", "HTML/CSS"],
       tags: ["Full Stack", "Web App", "Education"],
@@ -557,7 +857,7 @@ const ProjectsSection = () => {
     },
     {
       title: "QuickSettle",
-      period: "2023",
+      period: "July 2024 (Hackathon)",
       description: "Created an extension to the Westpac mobile app allowing users to quickly settle transactions. Features include automation for detecting individual or group payments, seamless integration with multiple payment methods, and customizable payment links generation.",
       tech: ["Mobile App Development", "Payment API Integration", "UX Design"],
       tags: ["FinTech", "Mobile App", "UX/UI"],
