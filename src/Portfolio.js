@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TrailerStyleProjectCard from './TrailerStyleProjectCard';
 import { ArrowUpRight, BookOpen, Award, Github, Linkedin, Globe, Mail } from 'lucide-react';
+import { initGA, logPageView } from './analytics';
 
 
 const animationCSS = `
@@ -115,13 +116,17 @@ const SectionTitle = ({ title, subtitle }) => {
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
+    // Initialize Google Analytics
+    initGA();
+    logPageView();
+
     // Simulate loading time
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
-    
+
     // Setup scroll event listener for nav highlighting
     const handleScroll = () => {
       const sections = document.querySelectorAll('section');
