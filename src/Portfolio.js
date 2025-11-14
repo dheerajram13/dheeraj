@@ -58,7 +58,7 @@ const animationCSS = `
     animation: shimmer 2s infinite;
   }
 
-  .hover\:scale-102:hover {
+  .hover-scale-102:hover {
     transform: scale(1.02);
   }
   
@@ -514,7 +514,7 @@ const ExperienceSection = () => {
                       className={`w-full text-left p-3 rounded-lg transition-all duration-300 relative group ${
                         selectedExp === index
                           ? 'bg-gradient-to-r from-primary to-tertiary text-white shadow-lg scale-105 transform'
-                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:scale-102 hover:shadow-md'
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover-scale-102 hover:shadow-md'
                       }`}
                     >
                       {/* Timeline Dot with Ripple Effect */}
