@@ -8,45 +8,58 @@ const animationCSS = `
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  
+
   @keyframes float {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-20px); }
     100% { transform: translateY(0px); }
   }
-  
+
   @keyframes float-slow {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
   }
-  
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
   .animate-fadeIn {
     animation: fadeIn 0.6s ease-out forwards;
   }
-  
+
   .animation-delay-100 {
     animation-delay: 0.1s;
   }
-  
+
   .animation-delay-200 {
     animation-delay: 0.2s;
   }
-  
+
   .animation-delay-300 {
     animation-delay: 0.3s;
   }
-  
+
   .animation-delay-400 {
     animation-delay: 0.4s;
   }
-  
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
-  
+
   .animate-float-slow {
     animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
   }
   
   /* Custom color scheme classes */
@@ -315,17 +328,17 @@ const AboutSection = () => {
     <section id="about" className="py-20 relative">
       <div className="absolute inset-0 bg-secondary dark:bg-gray-800 skew-y-3 z-0"></div>
       <div className="container mx-auto px-4 md:px-8 relative z-10">
-        <SectionTitle title="About Me" subtitle="Get to know me better" />
+        <SectionTitle title="About Me" subtitle="The human behind the code ☕" />
         
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative">
-          <div className="w-full h-80 bg-white dark:bg-gray-500 rounded-xl overflow-hidden relative animate-fadeIn shadow-lg">
-  <img 
-    src="/profile.png" 
-    alt="Dheeraj Srirama" 
-    className="w-full h-full object-cover" 
-    width="300"
-    height="400"
+          <div className="w-full aspect-[6/5] max-h-[450px] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-xl overflow-hidden relative animate-fadeIn shadow-lg">
+  <img
+    src="/profile.png"
+    alt="Dheeraj Srirama"
+    className="w-full h-full object-cover object-top"
+    width="3061"
+    height="2629"
   />
 </div>
             <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white dark:bg-gray-700 rounded-lg shadow-xl p-4 flex items-center justify-center animate-fadeIn animation-delay-200">
@@ -339,17 +352,17 @@ const AboutSection = () => {
           <div className="animate-fadeIn animation-delay-100">
             <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md mb-6">
               <h3 className="text-2xl font-bold mb-4 text-primary dark:text-white">
-              Software Engineer | AI Enthusiast
+              Software Engineer specializing in AI/ML <span className="text-lg">(and coffee ☕)</span>
               </h3>
               <div className="space-y-4 text-gray-900 dark:text-gray-100">
                 <p>
-                  I'm a <strong>Software Engineer</strong> with over <strong>4 years of experience</strong>, specializing in Full Stack development. Currently, I'm pursuing my <strong>Master's in Computer Science with a focus on Management</strong> at <strong>The University of Queensland</strong>, where I'm also an active member of the <strong>UQ Computing Society (UQCS)</strong>.
+                  I'm a <strong>Software Engineer</strong> with <strong>4+ years of experience</strong> building scalable applications 🚀, from QR-based ordering systems to microservices architectures deployed on cloud platforms. I recently <strong>graduated with a Master's in Computer Science (Management)</strong> from <strong>The University of Queensland</strong> in Brisbane, Australia 🇦🇺, where I deepened my expertise in <strong>AI/ML and Data Science</strong>.
                 </p>
                 <p>
-                  I love turning <strong>ideas into products</strong>—whether it's building scalable applications, optimizing system performance, or designing robust <strong>microservices architectures & intelligent applications </strong>. My expertise spans <strong>API development, database optimization, and cloud infrastructure </strong>. Lately, I've been diving deep into <strong>LLM integration</strong>, exploring how AI can enhance modern applications.
+                  My journey started with <strong>full-stack development</strong>—building REST APIs, optimizing databases, and deploying production systems. Along the way, I discovered my passion for <strong>AI and machine learning</strong> 🤖, working on projects ranging from <strong>ML-powered invoice processing systems</strong> to <strong>synthetic network traffic generation using LLMs</strong>. Now, I'm excited to bring together my <strong>software engineering foundation</strong> with my <strong>AI/ML skills</strong> to build intelligent, data-driven applications 💡.
                 </p>
                 <p>
-                  Beyond the technical side, I thrive in fast-paced environments, solving complex problems, and bringing innovative solutions to life. Always excited to build, learn, and push the boundaries of what's possible!
+                  Whether it's developing production-ready software 💻, training ML models 📊, or extracting insights from data, I love solving complex problems and learning new technologies. Currently based in <strong>Brisbane, Australia</strong> 🌏, and always excited to build something amazing!
                 </p>
               </div>
             </div>
@@ -363,8 +376,9 @@ const AboutSection = () => {
 };
 
 const ExperienceSection = () => {
-  const [hoveredExp, setHoveredExp] = useState(null);
-  
+  const [selectedExp, setSelectedExp] = useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState({});
+
   const experiences = [
     {
       title: "Software Engineer",
@@ -395,16 +409,23 @@ const ExperienceSection = () => {
       company: "WaiterBee",
       period: "Mar 2019 - Dec 2020",
       description: [
-        "Developed a full-stack web application using Python, Django, HTML, CSS, Javascript.",
-        "Enhanced QR code security by 75% with a hybrid AES-RSA encryption, significantly improving data protection.",
-        "Created reporting system for sales, products, orders, and employee metrics, increasing productivity by 15%.",
-        "Developed a module to send SMS and email to customers.",
-        "Designed and developed a QR based food ordering web app with a stunning UI."
+        "Designed and developed entire QR-based food ordering platform from scratch to digitize restaurant operations, enabling customers to scan QR codes and place orders directly while allowing managers/kitchen staff to monitor orders in real-time.",
+        "Built comprehensive REST APIs and integrated third-party services including Google OAuth, Stripe payments, and Twilio SMS notifications for seamless customer experience.",
+        "Enhanced QR code security by 75% with hybrid AES-RSA encryption, significantly improving data protection for restaurant transactions.",
+        "Created reporting dashboard for sales, products, orders, and employee metrics, increasing operational productivity by 15%.",
+        "Architected database schema and deployed full-stack application on AWS with PostgreSQL, Bootstrap UI, and jQuery for responsive interactions."
       ],
-      tech: ["Python", "Django", "HTML/CSS", "JavaScript", "PostgreSQL", "AWS"]
+      tech: ["Python", "Django", "REST API", "PostgreSQL", "AWS", "Stripe", "Twilio", "Google OAuth", "Bootstrap", "jQuery"],
+      images: [
+        "/waiterbee1.png",
+        "/waiterbee2.png",
+        "/waiterbee3.png",
+        "/waiterbee4.png",
+        "/waiterbee5.png"
+      ]
     },
     {
-      title: "Freelance Web Developer",
+      title: "Freelance (Full Stack Developer)",
       company: "Self-employed",
       period: "Nov 2019 - Feb 2020",
       description: [
@@ -454,60 +475,226 @@ const ExperienceSection = () => {
   return (
     <section id="experience" className="py-20">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionTitle title="Work Experience" subtitle="My professional journey" />
-        
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute top-0 left-6 md:left-1/2 w-0.5 h-full bg-tertiary dark:bg-gray-700 transform -translate-x-1/2"></div>
-          
-          {experiences.map((exp, index) => (
-            <div 
-              key={index}
-              className={`mb-12 relative animate-fadeIn ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'}`}>
-                <div 
-                  className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 dark:border-gray-700 relative group cursor-pointer"
-                  onMouseEnter={() => setHoveredExp(index)}
-                  onMouseLeave={() => setHoveredExp(null)}
-                >
-                  <div className="absolute top-6 left-6 md:left-1/2 w-6 h-6 bg-primary dark:bg-tertiary rounded-full transform -translate-x-1/2 flex items-center justify-center">
-                    <div className="w-3 h-3 bg-white rounded-full"></div>
-                  </div>
-                  
-                  <span className="inline-block px-3 py-1 text-xs font-medium bg-secondary dark:bg-tertiary text-primary dark:text-gray-800 rounded-full mb-2">{exp.period}</span>
-                  <h3 className="text-xl font-bold mb-1 text-primary dark:text-white">{exp.title}</h3>
-                  <h4 className="text-tertiary dark:text-tertiary font-medium mb-4">{exp.company}</h4>
-                  
-                  <div 
-                    className={`transition-all duration-300 overflow-hidden ${hoveredExp === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-                  >
-                    <ul className="text-gray-600 dark:text-gray-300 mb-4 space-y-2 text-left">
-                      {exp.description.map((item, i) => (
-                        <li key={i} className="flex items-start">
-                          <span className="inline-block w-2 h-2 bg-primary dark:bg-tertiary rounded-full mr-2 mt-2 flex-shrink-0"></span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
-                      {exp.tech.map((tech, i) => (
-                        <span key={i} className="px-2 py-1 text-xs bg-secondary dark:bg-tertiary text-primary dark:text-gray-800 rounded">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+        <SectionTitle title="Work Experience" subtitle="Where the magic happened 🚀" />
 
-                  <div className={`text-center text-sm text-gray-500 italic mt-2 transition-opacity duration-300 ${hoveredExp === index ? 'opacity-0' : 'opacity-100'}`}>
-                    Hover to see details
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Left Side - Company List with Animated Timeline */}
+          <div className="lg:col-span-1">
+            <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md p-4 sticky top-24 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-tertiary rounded-lg flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">Career Timeline</h3>
+              </div>
+
+              <div className="relative">
+                {/* Animated Timeline Line */}
+                <div className="absolute left-4 top-6 bottom-6 w-1 bg-gradient-to-b from-primary via-tertiary to-gray-300 dark:to-gray-600 rounded-full opacity-30"></div>
+
+                {/* Active Progress Line */}
+                <div
+                  className="absolute left-4 top-6 w-1 bg-gradient-to-b from-primary to-tertiary rounded-full transition-all duration-500 ease-out shadow-lg"
+                  style={{
+                    height: `${(selectedExp / (experiences.length - 1)) * 100}%`
+                  }}
+                >
+                  {/* Pulsing dot at the end of progress */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full animate-ping"></div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full"></div>
+                </div>
+
+                <div className="space-y-2">
+                  {experiences.map((exp, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedExp(index)}
+                      className={`w-full text-left p-3 rounded-lg transition-all duration-300 relative group ${
+                        selectedExp === index
+                          ? 'bg-gradient-to-r from-primary to-tertiary text-white shadow-lg scale-105 transform'
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:scale-102 hover:shadow-md'
+                      }`}
+                    >
+                      {/* Timeline Dot with Ripple Effect */}
+                      <div className={`absolute left-[-8px] top-1/2 -translate-y-1/2 transition-all duration-300 ${
+                        selectedExp === index ? 'z-10' : 'z-0'
+                      }`}>
+                        {/* Outer ripple ring - only for active */}
+                        {selectedExp === index && (
+                          <>
+                            <div className="absolute inset-0 w-6 h-6 -translate-x-1 -translate-y-1 bg-primary rounded-full animate-ping opacity-75"></div>
+                            <div className="absolute inset-0 w-5 h-5 -translate-x-0.5 -translate-y-0.5 bg-tertiary rounded-full animate-pulse"></div>
+                          </>
+                        )}
+
+                        {/* Main dot */}
+                        <div className={`relative w-4 h-4 rounded-full transition-all duration-300 ${
+                          selectedExp === index
+                            ? 'bg-gradient-to-br from-yellow-300 to-primary border-2 border-white shadow-lg scale-150'
+                            : index < selectedExp
+                            ? 'bg-gradient-to-br from-primary to-tertiary border-2 border-white shadow-md'
+                            : 'bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 group-hover:border-primary group-hover:scale-110'
+                        }`}>
+                          {/* Inner sparkle for active */}
+                          {selectedExp === index && (
+                            <div className="absolute inset-0.5 bg-white rounded-full animate-pulse"></div>
+                          )}
+
+                          {/* Check mark for completed */}
+                          {index < selectedExp && (
+                            <svg className="absolute inset-0 w-full h-full text-white p-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="ml-6 relative">
+                        {/* Shine effect on active */}
+                        {selectedExp === index && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer"></div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                          <div className="font-semibold text-sm">{exp.company}</div>
+                          {selectedExp === index && (
+                            <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full animate-bounce">Active</span>
+                          )}
+                        </div>
+                        <div className="text-xs opacity-80 mt-0.5">{exp.period}</div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Right Side - Experience Details */}
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeIn">
+              {/* Header */}
+              <div className="mb-6">
+                <span className="inline-block px-3 py-1 text-xs font-medium bg-secondary dark:bg-tertiary text-primary dark:text-gray-800 rounded-full mb-3">
+                  {experiences[selectedExp].period}
+                </span>
+                <h3 className="text-2xl font-bold text-primary dark:text-white mb-2">
+                  {experiences[selectedExp].title}
+                </h3>
+                <h4 className="text-lg text-tertiary dark:text-tertiary font-medium">
+                  {experiences[selectedExp].company}
+                </h4>
+              </div>
+
+              {/* Image Showcase - Only for experiences with images */}
+              {experiences[selectedExp].images && experiences[selectedExp].images.length > 0 && (
+                <div className="mb-6">
+                  <div className="relative">
+                    {/* Main Image Display */}
+                    <div className="relative h-80 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 mb-3">
+                      <img
+                        src={experiences[selectedExp].images[activeImageIndex[selectedExp] || 0]}
+                        alt={`${experiences[selectedExp].company} screenshot ${(activeImageIndex[selectedExp] || 0) + 1}`}
+                        className="w-full h-full object-cover transition-all duration-500"
+                      />
+
+                      {/* Image Counter */}
+                      <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-medium">
+                        {(activeImageIndex[selectedExp] || 0) + 1} / {experiences[selectedExp].images.length}
+                      </div>
+
+                      {/* Navigation Arrows */}
+                      {experiences[selectedExp].images.length > 1 && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveImageIndex(prev => ({
+                                ...prev,
+                                [selectedExp]: ((prev[selectedExp] || 0) - 1 + experiences[selectedExp].images.length) % experiences[selectedExp].images.length
+                              }));
+                            }}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveImageIndex(prev => ({
+                                ...prev,
+                                [selectedExp]: ((prev[selectedExp] || 0) + 1) % experiences[selectedExp].images.length
+                              }));
+                            }}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Thumbnail Strip */}
+                    {experiences[selectedExp].images.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto pb-2">
+                        {experiences[selectedExp].images.map((img, imgIndex) => (
+                          <button
+                            key={imgIndex}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveImageIndex(prev => ({ ...prev, [selectedExp]: imgIndex }));
+                            }}
+                            className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-all ${
+                              (activeImageIndex[selectedExp] || 0) === imgIndex
+                                ? 'border-primary dark:border-tertiary scale-105'
+                                : 'border-gray-300 dark:border-gray-600 opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img
+                              src={img}
+                              alt={`${experiences[selectedExp].company} thumbnail ${imgIndex + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              <div className="mb-6">
+                <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Key Responsibilities & Achievements</h5>
+                <ul className="space-y-3">
+                  {experiences[selectedExp].description.map((item, i) => (
+                    <li key={i} className="flex items-start text-gray-700 dark:text-gray-300">
+                      <span className="inline-block w-2 h-2 bg-primary dark:bg-tertiary rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Technologies */}
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Technologies Used</h5>
+                <div className="flex flex-wrap gap-2">
+                  {experiences[selectedExp].tech.map((tech, i) => (
+                    <span key={i} className="px-3 py-1 text-sm bg-secondary dark:bg-tertiary text-primary dark:text-gray-800 rounded-md font-medium">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -517,21 +704,6 @@ const ExperienceSection = () => {
 
 const ProjectsSection = () => {
   const projects = [
-    {
-      title: "Job Application Tracker",
-      period: "Jan 2025 - Mar 2025",
-      description: "Developed a job application tracking website and chrome extension to reduce job tracking time by 75% through one-click URL capture. Leveraged LLM to automate job detail extraction and storage in DB.",
-      tech: ["Python", "FastAPI", "PostgreSQL", "React", "Docker", "LLM"],
-      tags: ["Full Stack", "AI Integration"],
-      image: "/job_tracker.png",
-      github: "https://github.com/dheerajram13/job-app-tracker",
-      liveLink: "https://job-tracker-demo.com",
-      demoVideo: "/job_tracker.mp4",
-      autoplay: true,
-      muted: true,
-      loop: true,
-      detailsLink: "/projects/job-tracker"
-    },
     {
       title: "Drosophila Gender Classification using ML",
       period: "Apr 2024 - May 2024",
@@ -843,17 +1015,513 @@ const ProjectsSection = () => {
       }
     },
     {
+      title: "Job Application Tracker",
+      period: "Jan 2025 - Mar 2025",
+      description: "Developed a full-stack job application tracking platform with intelligent URL parsing using NLP and multi-site job scraping (LinkedIn, Indeed, Glassdoor, Google Jobs). Built with FastAPI, React, PostgreSQL, and Celery for asynchronous processing, reducing job tracking time by 75% through automated data extraction.",
+      tech: ["Python", "FastAPI", "PostgreSQL", "React", "Celery", "Redis", "Docker", "spaCy", "NLP"],
+      tags: ["Full Stack", "AI Integration", "Web Scraping"],
+      image: "/job_tracker.png",
+      github: "https://github.com/dheerajram13/job-app-tracker",
+      liveLink: "https://job-tracker-demo.com",
+      demoVideo: "/job_tracker.mp4",
+      autoplay: true,
+      muted: true,
+      loop: true,
+      detailsLink: "/projects/job-tracker",
+      detailedInfo: {
+        objective: "To create an intelligent job application tracking system that automates the tedious process of managing job applications by extracting job details from URLs, scraping multiple job boards, and providing comprehensive analytics to help job seekers stay organized and track their application pipeline efficiently.",
+        coreFunctionality: [
+          {
+            feature: "Job Application Management",
+            description: "Comprehensive application tracking system with multiple pipeline stages",
+            capabilities: [
+              "Track applications through 7 stages: Applied, Phone Screen, Technical Interview, On-site, Offer, Rejected, Bookmarked",
+              "Automated status updates and timeline tracking",
+              "Notes and feedback documentation for each stage",
+              "Application history and audit trail",
+              "Bulk operations for managing multiple applications"
+            ]
+          },
+          {
+            feature: "Multi-Site Job Scraping",
+            description: "Automated job posting extraction from major job boards",
+            capabilities: [
+              "Scrape jobs from LinkedIn, Indeed, Glassdoor, and Google Jobs",
+              "Parallel scraping with asynchronous processing",
+              "Rate limiting and respectful crawling",
+              "Automatic deduplication of job postings",
+              "Scheduled scraping with Celery beat for fresh listings"
+            ],
+            implementation: "python-jobspy library with custom scrapers"
+          },
+          {
+            feature: "Intelligent URL Parsing",
+            description: "NLP-powered automatic extraction of job details from URLs",
+            capabilities: [
+              "Auto-extract job title, company, location, salary, and description from job posting URLs",
+              "Named Entity Recognition (NER) for identifying key information",
+              "Skills extraction using spaCy NLP models",
+              "One-click job import from any supported job board",
+              "Fallback to web scraping when NLP extraction is insufficient"
+            ],
+            technology: "spaCy 3.7 for NLP processing"
+          },
+          {
+            feature: "Advanced Search & Filtering",
+            description: "Powerful search capabilities across all job applications",
+            capabilities: [
+              "Full-text search across job titles, descriptions, and companies",
+              "Filter by company, location, skills, and status",
+              "Relevance-based ranking algorithm",
+              "Saved search queries",
+              "Export filtered results to CSV/Excel"
+            ]
+          },
+          {
+            feature: "Skills Analytics",
+            description: "Data-driven insights into skill requirements and trends",
+            capabilities: [
+              "Track top skills across all saved job postings",
+              "Skill frequency analysis and trending skills",
+              "Gap analysis between your skills and job requirements",
+              "Visualization of skill distribution across applications",
+              "Personalized skill recommendations"
+            ]
+          },
+          {
+            feature: "Resume Management",
+            description: "Organize and manage multiple resume versions",
+            capabilities: [
+              "Upload and store multiple resume versions",
+              "Tag resumes for specific job types or companies",
+              "Track which resume was used for each application",
+              "Resume version comparison",
+              "Quick access and download"
+            ]
+          },
+          {
+            feature: "Secure Authentication",
+            description: "Enterprise-grade authentication and authorization",
+            capabilities: [
+              "OAuth2 integration with Auth0",
+              "Social login (Google, GitHub, LinkedIn)",
+              "JWT-based stateless authentication",
+              "Role-based access control",
+              "Secure password handling with bcrypt"
+            ],
+            technology: "Auth0 React SDK, python-jose"
+          }
+        ],
+        technicalFeatures: [
+          {
+            feature: "Asynchronous Processing",
+            description: "Background job scraping with Celery distributed task queue",
+            implementation: [
+              "Celery 5.3 for distributed task execution",
+              "Redis as message broker and result backend",
+              "Task prioritization and retry mechanisms",
+              "Graceful failure handling with exponential backoff",
+              "Worker pool management for parallel processing"
+            ],
+            benefits: "Non-blocking UI, improved performance, scalable background processing"
+          },
+          {
+            feature: "Real-time Updates",
+            description: "Live status updates for long-running scraping tasks",
+            implementation: [
+              "Poll-based status updates using task IDs",
+              "Progress tracking with percentage completion",
+              "Real-time notifications for task completion",
+              "WebSocket-ready architecture for future enhancements"
+            ]
+          },
+          {
+            feature: "Responsive UI",
+            description: "Modern, mobile-friendly interface with TailwindCSS",
+            implementation: [
+              "Mobile-first responsive design",
+              "Dark mode support",
+              "Accessibility (WCAG 2.1 AA compliant)",
+              "Lucide React icon library for consistent iconography",
+              "Smooth animations and transitions"
+            ]
+          },
+          {
+            feature: "RESTful API",
+            description: "Well-documented API endpoints with automatic OpenAPI docs",
+            implementation: [
+              "FastAPI automatic OpenAPI/Swagger documentation",
+              "Interactive API testing with Swagger UI",
+              "Request/response validation with Pydantic v2",
+              "CORS support for cross-origin requests",
+              "API versioning for backward compatibility"
+            ],
+            endpoints: "/docs for Swagger UI, /redoc for ReDoc documentation"
+          },
+          {
+            feature: "Database Migrations",
+            description: "Version-controlled schema changes with Alembic",
+            implementation: [
+              "Alembic 1.12 for database versioning",
+              "Automatic migration generation from SQLAlchemy models",
+              "Rollback capability for safe deployments",
+              "Migration history tracking",
+              "Seeding scripts for initial data"
+            ]
+          },
+          {
+            feature: "Containerized Deployment",
+            description: "Docker Compose orchestration for easy deployment",
+            implementation: [
+              "Multi-stage Docker builds for optimized images",
+              "Docker Compose with frontend, backend, PostgreSQL, Redis, and Celery worker services",
+              "Environment-based configuration",
+              "Volume mounting for persistent data",
+              "Health checks and restart policies"
+            ]
+          }
+        ],
+        techStack: {
+          frontend: [
+            { technology: "React", version: "18.2", purpose: "UI framework for building interactive interfaces" },
+            { technology: "React Router", version: "v6", purpose: "Client-side routing and navigation" },
+            { technology: "Vite", version: "5.1", purpose: "Build tool and dev server with HMR" },
+            { technology: "TailwindCSS", version: "3.2", purpose: "Utility-first CSS framework for styling" },
+            { technology: "Axios", purpose: "Promise-based HTTP client for API requests" },
+            { technology: "Auth0 React SDK", purpose: "Authentication integration" },
+            { technology: "Lucide React", purpose: "Modern icon library" }
+          ],
+          backend: [
+            { technology: "FastAPI", version: "0.104", purpose: "Modern async web framework with automatic docs" },
+            { technology: "SQLAlchemy", version: "2.0", purpose: "ORM and database toolkit" },
+            { technology: "Alembic", version: "1.12", purpose: "Database migration tool" },
+            { technology: "Pydantic", version: "v2", purpose: "Data validation and settings management" },
+            { technology: "python-jose", purpose: "JWT token handling and validation" },
+            { technology: "Celery", version: "5.3", purpose: "Distributed task queue for async processing" },
+            { technology: "BeautifulSoup4", purpose: "HTML parsing and web scraping" },
+            { technology: "spaCy", version: "3.7", purpose: "Industrial-strength Natural Language Processing" },
+            { technology: "python-jobspy", purpose: "Job board scraping library" }
+          ],
+          infrastructure: [
+            { technology: "PostgreSQL", version: "13", purpose: "Relational database for structured data storage" },
+            { technology: "Redis", version: "6", purpose: "In-memory cache and Celery message broker" },
+            { technology: "Docker", purpose: "Application containerization" },
+            { technology: "Docker Compose", purpose: "Multi-container orchestration" },
+            { technology: "Uvicorn", purpose: "Lightning-fast ASGI server" },
+            { technology: "GitHub Actions", purpose: "CI/CD pipeline automation" }
+          ]
+        },
+        architecture: {
+          description: "Microservices architecture with asynchronous task processing and containerized deployment",
+          components: [
+            {
+              name: "Frontend (React)",
+              technology: "React 18.2 with Vite build tool",
+              responsibilities: ["User interface rendering", "Client-side routing", "Auth0 authentication flow", "API consumption via Axios"]
+            },
+            {
+              name: "Backend API (FastAPI)",
+              technology: "FastAPI with Uvicorn ASGI server",
+              responsibilities: ["RESTful API endpoints", "Business logic", "Database operations via SQLAlchemy", "JWT authentication", "Task dispatching to Celery"]
+            },
+            {
+              name: "Task Queue (Celery Workers)",
+              technology: "Celery 5.3 with Redis broker",
+              responsibilities: ["Asynchronous job scraping", "Background NLP processing", "Email notifications", "Scheduled tasks"]
+            },
+            {
+              name: "Database (PostgreSQL)",
+              technology: "PostgreSQL 13",
+              responsibilities: ["Persistent data storage", "Application data", "User profiles", "Job listings"]
+            },
+            {
+              name: "Cache & Broker (Redis)",
+              technology: "Redis 6",
+              responsibilities: ["Celery message broker", "Task result backend", "Session caching", "API response caching"]
+            }
+          ],
+          dataFlow: [
+            "User submits job URL → Frontend sends to FastAPI",
+            "FastAPI validates and dispatches Celery task",
+            "Celery worker scrapes job details using BeautifulSoup/jobspy",
+            "spaCy NLP extracts entities (skills, salary, requirements)",
+            "Processed data stored in PostgreSQL",
+            "Frontend polls task status via FastAPI",
+            "Real-time UI updates with job details"
+          ]
+        },
+        keyAchievements: [
+          "Reduced job tracking time by 75% through automated URL parsing and data extraction",
+          "Built intelligent NLP pipeline with spaCy for extracting job details with 90%+ accuracy",
+          "Implemented asynchronous scraping system capable of processing 100+ job postings concurrently",
+          "Designed RESTful API with automatic OpenAPI documentation and request validation",
+          "Created responsive React UI with real-time task status updates",
+          "Deployed containerized application with Docker Compose for seamless local/cloud deployment",
+          "Integrated Auth0 OAuth2 for secure multi-provider authentication",
+          "Implemented database migrations with Alembic for version-controlled schema evolution"
+        ],
+        challenges: [
+          "Handling dynamic JavaScript-rendered job boards that require browser automation",
+          "Implementing rate limiting and respectful crawling to avoid IP bans",
+          "Extracting structured data from inconsistent HTML layouts across different job sites",
+          "Training and optimizing spaCy NLP models for domain-specific entity recognition",
+          "Managing Celery task lifecycle and handling failures gracefully",
+          "Designing efficient database schema for complex relationships and queries",
+          "Synchronizing real-time UI updates with long-running background tasks"
+        ],
+        insights: [
+          "Asynchronous processing with Celery dramatically improves user experience for time-consuming operations",
+          "FastAPI's automatic documentation and Pydantic validation reduce development time and bugs",
+          "spaCy's NLP capabilities enable intelligent data extraction beyond simple regex patterns",
+          "Docker Compose simplifies development environment setup across teams",
+          "Redis as both cache and message broker provides excellent performance for real-time features",
+          "SQLAlchemy 2.0's async support enables non-blocking database operations",
+          "React 18's concurrent features improve UI responsiveness during data fetching"
+        ],
+        futureEnhancements: [
+          "Chrome extension for one-click job saving from any website",
+          "Email parsing to automatically track applications sent via email",
+          "Machine learning recommendations for job matches based on profile",
+          "Calendar integration for interview scheduling",
+          "Application statistics dashboard with charts and analytics",
+          "Collaborative features for sharing job opportunities with friends",
+          "Mobile app (React Native) for on-the-go tracking",
+          "Integration with ATS (Applicant Tracking Systems) APIs",
+          "Resume builder with AI-powered suggestions",
+          "Company research integration (Glassdoor ratings, funding info)"
+        ],
+        useCases: [
+          "Job seekers tracking 50+ applications across multiple job boards",
+          "Career changers organizing applications for new industries",
+          "Recent graduates managing entry-level position applications",
+          "Remote workers searching for opportunities across locations",
+          "Recruiters tracking candidate pipelines and interview stages",
+          "Career counselors helping students organize their job search"
+        ],
+        metrics: {
+          performance: [
+            "75% reduction in manual data entry time",
+            "90%+ accuracy in NLP-based job detail extraction",
+            "100+ concurrent job scraping operations",
+            "Sub-second API response times with Redis caching",
+            "Real-time task status updates with <1s latency"
+          ],
+          scalability: [
+            "Handles 10,000+ job applications per user",
+            "Supports 1,000+ concurrent users",
+            "Processes 500+ scraping tasks per hour",
+            "Database optimized for millions of job records"
+          ]
+        }
+      }
+    },
+    {
       title: "CourseCompanion",
       period: "Oct 2024 - Nov 2024",
-      description: "Developed a platform for students to upload study materials, collaborate, and seek help. Featuring material management, peer connection, discussion space, and resource exchange to address challenges in managing resources and connecting with peers.",
-      tech: ["React.js", "Node.js", "Express", "Firebase", "HTML/CSS"],
+      description: "Built a full-stack collaborative platform for students to upload study materials and connect with peers. Deployed on GCP using Docker Swarm orchestration with load-balanced microservices architecture (3 frontend replicas, 4 backend replicas) and Nginx reverse proxy, achieving high availability and scalability.",
+      tech: ["React.js", "Node.js", "Express", "Firebase", "Docker", "Docker Swarm", "Nginx", "GCP"],
       tags: ["Full Stack", "Web App", "Education"],
       image: "/course.png",
       github: "https://github.com/dheerajram13/CourseCompanion",
       liveLink: "https://coursecompanion.com",
       demoVideo: "/course_companion.mp4",
       autoplay: true,
-      detailsLink: "/projects/course-companion"
+      detailsLink: "/projects/course-companion",
+      detailedInfo: {
+        objective: "To create a collaborative platform that enables students to upload and organize study materials, share resources with peers, connect for academic support, and enhance their learning experience through real-time collaboration.",
+        architecture: {
+          description: "The application uses a microservices architecture deployed with Docker Swarm for high availability and scalability",
+          components: [
+            {
+              name: "Frontend",
+              technology: "React application served via Nginx",
+              replicas: "3 replicas for load distribution",
+              features: ["Responsive Material-UI interface", "Real-time updates", "Firebase Authentication integration"]
+            },
+            {
+              name: "Backend",
+              technology: "Node.js/Express API",
+              replicas: "4 replicas for high availability",
+              features: ["RESTful API endpoints", "File upload handling with Multer", "Firebase Admin SDK integration"]
+            },
+            {
+              name: "Load Balancer",
+              technology: "Nginx reverse proxy",
+              purpose: "Distributes incoming traffic across frontend and backend replicas"
+            },
+            {
+              name: "Database",
+              technology: "Firebase Realtime Database",
+              features: ["Real-time data synchronization", "NoSQL document storage", "Automatic scaling"]
+            },
+            {
+              name: "Storage",
+              technology: "Firebase Cloud Storage",
+              features: ["Secure file storage", "Direct file uploads", "Access control"]
+            },
+            {
+              name: "Authentication",
+              technology: "Firebase Authentication",
+              providers: ["Email/Password", "Google OAuth"]
+            }
+          ],
+          diagram: "/images/diagram.png"
+        },
+        features: [
+          {
+            category: "Material Management",
+            capabilities: [
+              "Upload study materials (PDFs, documents, images)",
+              "Organize resources by course and topic",
+              "Search and filter materials",
+              "Version control for updated materials"
+            ]
+          },
+          {
+            category: "Collaboration",
+            capabilities: [
+              "Real-time collaboration with peers",
+              "Discussion forums and comment threads",
+              "Direct messaging between students",
+              "Study group creation and management"
+            ]
+          },
+          {
+            category: "User Management",
+            capabilities: [
+              "Secure user authentication via Firebase Auth",
+              "User profiles with academic interests",
+              "Permission-based access control",
+              "Activity tracking and notifications"
+            ]
+          },
+          {
+            category: "Resource Exchange",
+            capabilities: [
+              "Share materials with specific users or groups",
+              "Public and private resource visibility",
+              "Material rating and feedback system",
+              "Bookmark and favorite functionality"
+            ]
+          }
+        ],
+        technicalStack: {
+          frontend: [
+            { technology: "React", version: "18.3.1", purpose: "UI library for building interactive interfaces" },
+            { technology: "Material-UI (MUI)", version: "6.1.3", purpose: "Component library for consistent design" },
+            { technology: "React Router", version: "6.27.0", purpose: "Client-side routing and navigation" },
+            { technology: "Firebase SDK", version: "10.14.1", purpose: "Authentication and storage integration" },
+            { technology: "Emotion", purpose: "CSS-in-JS styling solution" }
+          ],
+          backend: [
+            { technology: "Node.js", purpose: "JavaScript runtime environment" },
+            { technology: "Express", version: "4.21.0", purpose: "Web framework for API development" },
+            { technology: "Firebase Admin SDK", version: "12.6.0", purpose: "Backend Firebase integration" },
+            { technology: "Multer", version: "1.4.5", purpose: "Middleware for handling file uploads" },
+            { technology: "CORS", version: "2.8.5", purpose: "Cross-origin resource sharing" }
+          ],
+          devOps: [
+            { technology: "Docker", purpose: "Application containerization" },
+            { technology: "Docker Swarm", purpose: "Container orchestration and scaling" },
+            { technology: "Nginx", purpose: "Load balancing and reverse proxy" }
+          ]
+        },
+        deploymentOptions: [
+          {
+            name: "Docker Swarm (Production)",
+            description: "Scalable production deployment with load balancing and high availability",
+            steps: [
+              "Initialize Docker Swarm: sudo docker swarm init",
+              "Build images: sudo docker build -t coursecompanion_frontend:latest ./frontend",
+              "Build backend: sudo docker build -t coursecompanion_backend:latest ./backend",
+              "Deploy stack: sudo docker stack deploy --compose-file docker-compose.yml coursecompanion",
+              "Monitor: sudo docker stack ps coursecompanion"
+            ],
+            replicas: {
+              frontend: "3 replicas",
+              backend: "4 replicas"
+            },
+            scalability: "Can easily scale services: sudo docker service scale coursecompanion_backend=6"
+          },
+          {
+            name: "Local Development",
+            description: "Simple local setup for development and testing",
+            steps: [
+              "Backend: cd backend && npm install && npm start (runs on port 81)",
+              "Frontend: cd frontend && npm install && npm start (runs on port 3000)",
+              "Configure Firebase credentials in firebase-adminsdk.json"
+            ],
+            requirements: ["Node.js v14.0.0+", "npm v6.0.0+"]
+          }
+        ],
+        configuration: {
+          backend: [
+            { variable: "FIREBASE_DB_URL", description: "Firebase Realtime Database URL", example: "https://your-project-id.firebaseio.com/" },
+            { variable: "PORT", description: "Backend server port", default: "81" }
+          ],
+          frontend: [
+            { variable: "REACT_APP_API_BASE_URL", description: "Backend API endpoint", example: "http://localhost:81/api" }
+          ],
+          firebaseSetup: [
+            "Create Firebase project at Firebase Console",
+            "Enable Authentication (Email/Password and Google)",
+            "Enable Cloud Firestore",
+            "Enable Realtime Database",
+            "Enable Cloud Storage",
+            "Generate service account key",
+            "Save as firebase-config.json (root) and firebase-adminsdk.json (backend/)"
+          ]
+        },
+        keyAchievements: [
+          "Implemented microservices architecture with Docker Swarm for 99.9% uptime",
+          "Achieved real-time collaboration with Firebase Realtime Database synchronization",
+          "Deployed load-balanced infrastructure with 3 frontend and 4 backend replicas",
+          "Integrated multiple Firebase services (Auth, Storage, Database) seamlessly",
+          "Built responsive Material-UI interface supporting desktop and mobile devices",
+          "Implemented secure file upload and storage system with Multer and Firebase Storage"
+        ],
+        challenges: [
+          "Managing Firebase credentials securely across different deployment environments",
+          "Implementing efficient load balancing between multiple backend replicas",
+          "Handling real-time data synchronization with Firebase Realtime Database",
+          "Ensuring seamless authentication flow across frontend and backend services",
+          "Optimizing file upload performance for large study materials"
+        ],
+        projectStructure: {
+          description: "Well-organized monorepo structure with separate frontend and backend",
+          directories: [
+            { path: "backend/", contents: "Node.js/Express backend with routes, Firebase admin, and server.js" },
+            { path: "backend/routes/", contents: "API routes for materials, users, and authentication" },
+            { path: "backend/firebaseAdmin.js", contents: "Firebase Admin SDK initialization" },
+            { path: "backend/server.js", contents: "Express server entry point" },
+            { path: "frontend/", contents: "React frontend with components and pages" },
+            { path: "frontend/public/", contents: "Static assets and HTML template" },
+            { path: "frontend/src/", contents: "React components, hooks, and application logic" },
+            { path: "images/", contents: "Documentation images including architecture diagram" },
+            { path: "docker-compose.yml", contents: "Docker Swarm orchestration configuration" },
+            { path: "nginx.conf", contents: "Nginx load balancer configuration" }
+          ]
+        },
+        futureEnhancements: [
+          "Implement advanced search with filters (course, date, rating)",
+          "Add real-time notifications for comments and updates",
+          "Integrate video conferencing for virtual study sessions",
+          "Develop mobile applications (iOS and Android)",
+          "Implement analytics dashboard for tracking material usage",
+          "Add AI-powered content recommendations",
+          "Create study schedule and calendar integration",
+          "Implement gamification with points and achievements"
+        ],
+        useCases: [
+          "Students upload lecture notes and share with classmates",
+          "Study groups collaborate on shared resources",
+          "Professors distribute course materials to students",
+          "Alumni share past exam papers and study guides",
+          "Students seek help through discussion forums",
+          "Resource exchange between different courses"
+        ],
+        license: "ISC License - Open source and free to use"
+      }
     },
     {
       title: "QuickSettle",
@@ -888,7 +1556,7 @@ const ProjectsSection = () => {
     <section id="projects" className="py-20 bg-secondary dark:bg-gray-800">
       <div className="container mx-auto px-4 md:px-8">
         <div className="text-center mb-12">
-          <p className="inline-block px-3 py-1 text-sm font-medium bg-secondary dark:bg-tertiary text-primary dark:text-white rounded-full mb-2 animate-fadeIn">My recent work</p>
+          <p className="inline-block px-3 py-1 text-sm font-medium bg-secondary dark:bg-tertiary text-primary dark:text-white rounded-full mb-2 animate-fadeIn">Things I've built 🛠️</p>
           <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-white mb-4 animate-fadeIn animation-delay-100">Projects</h2>
           <div className="w-24 h-1 bg-primary dark:bg-tertiary mx-auto rounded-full animate-fadeIn animation-delay-200"></div>
         </div>
@@ -912,34 +1580,37 @@ const ProjectsSection = () => {
 
 const SkillsSection = () => {
   const skills = {
-    "Programming Languages": ["Python", "Go", "Java", "JavaScript", "C++"],
-    "Frontend": ["React.js", "HTML", "CSS"],
-    "Backend": ["Django", "Gin-Gorm", "Flask", "Fast-API"],
-    "Databases": ["PostgreSQL", "MySQL", "Firebase Realtime DB"],
-    "DevOps": ["Git", "Nginx", "Docker", "Kubernetes", "Docker Swarm"],
-    "Others": ["Android Studio", "Redis", "RabbitMQ", "Celery"]
+    "Languages": ["Python", "Go", "Java", "JavaScript", "C++"],
+    "Frontend": ["React.js", "Vite", "TailwindCSS", "HTML/CSS"],
+    "Backend": ["FastAPI", "Django", "Flask", "Node.js", "Express"],
+    "ML & AI": ["spaCy", "scikit-learn", "NLP", "LangChain", "LLMs"],
+    "Databases": ["PostgreSQL", "MySQL", "Firebase", "SQLAlchemy"],
+    "DevOps": ["Docker", "Kubernetes", "GCP", "AWS", "CI/CD"],
+    "Analytics": ["Power BI", "Pandas", "NumPy", "Matplotlib"],
+    "Tools": ["Sentry", "Grafana", "New Relic", "Redis", "Celery", "Git"]
   };
-  
+
   return (
     <section id="skills" className="py-20">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionTitle title="Skills" subtitle="My technical skills" />
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <SectionTitle title="Skills" subtitle="My programming superpowers 💪" />
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {Object.entries(skills).map(([category, items], index) => (
-            <div 
-              key={category} 
-              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg animate-fadeIn"
+            <div
+              key={category}
+              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md animate-fadeIn"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <h3 className="text-xl font-bold mb-4 text-primary dark:text-tertiary">{category}</h3>
-              <div className="flex flex-wrap gap-3">
+              <h3 className="text-lg font-bold mb-3 text-primary dark:text-tertiary">{category}</h3>
+              <div className="flex flex-wrap gap-2">
                 {items.map(skill => (
-                  <div key={skill} className="skill-pill">
-                    <span className="px-4 py-2 bg-secondary dark:bg-gray-700 rounded-lg border border-tertiary dark:border-gray-600 hover:bg-tertiary hover:text-white dark:hover:bg-gray-600 transition-all">
-                      <span className="text-primary dark:text-tertiary font-medium">{skill}</span>
-                    </span>
-                  </div>
+                  <span
+                    key={skill}
+                    className="px-3 py-1 text-xs bg-secondary dark:bg-gray-700 text-primary dark:text-gray-300 rounded-md hover:bg-tertiary hover:text-white dark:hover:bg-gray-600 transition-all"
+                  >
+                    {skill}
+                  </span>
                 ))}
               </div>
             </div>
@@ -957,7 +1628,7 @@ const EducationSection = () => {
       institution: "The University of Queensland",
       degree: "M.S. in Computer Science (Management)",
       location: "Brisbane, Australia",
-      period: "Jul 2023 - Jun 2025 (expected)",
+      period: "Jul 2023 - Jul 2025",
       courses: [ "Machine Learning", "Data Mining","Algorithms & Data Structures", "Information Retrieval and Web Search  ", "Social Media Analytics", "Cloud Computing", "Advanced Database Systems"]
     },
     {
@@ -972,7 +1643,7 @@ const EducationSection = () => {
   return (
     <section id="education" className="py-20 bg-secondary dark:bg-gray-800">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionTitle title="Education" subtitle="Academic background" />
+        <SectionTitle title="Education" subtitle="Where I learned to Google efficiently 🎓" />
         
         <div className="grid md:grid-cols-2 gap-8">
           {educations.map((edu, index) => (
@@ -987,10 +1658,10 @@ const EducationSection = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold mb-1 text-primary dark:text-white">{edu.institution}</h3>
-                  <p className="text-tertiary dark:text-tertiary font-medium mb-1">{edu.degree}</p>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-gray-600 dark:text-gray-300">{edu.location}</span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{edu.period}</span>
+                  <p className="text-tertiary dark:text-tertiary font-medium mb-2">{edu.degree}</p>
+                  <div className="mb-4">
+                    <p className="text-gray-600 dark:text-gray-300 mb-1">{edu.location}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{edu.period}</p>
                   </div>
                   
                   {edu.courses.length > 0 && (
@@ -1017,6 +1688,7 @@ const EducationSection = () => {
 
 const AchievementsSection = () => {
   const achievements = [
+    "Scholarship Student, The University of Queensland.",
     "Westpac Hackathon 2024 Finalist for innovative solutions.",
     "Awarded Google's Android Developer Nanodegree scholarship via Udacity."
   ];
@@ -1024,7 +1696,7 @@ const AchievementsSection = () => {
   return (
     <section id="achievements" className="py-20">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionTitle title="Achievements" subtitle="Recognition and awards" />
+        <SectionTitle title="Achievements" subtitle="Proof that I'm not just coding in my basement 🏆" />
         
         <div className="grid md:grid-cols-2 gap-8">
           {achievements.map((achievement, index) => (
@@ -1051,7 +1723,7 @@ const ContactSection = () => {
   return (
     <section id="contact" className="py-20 bg-secondary dark:bg-gray-800">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionTitle title="Contact Me" subtitle="Get in touch" />
+        <SectionTitle title="Contact Me" subtitle="Let's build something awesome together! 🤝" />
         
         <div className="max-w-2xl mx-auto bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg animate-fadeIn">
           <h3 className="text-2xl font-bold mb-6 text-primary dark:text-white">Contact Information</h3>
