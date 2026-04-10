@@ -9,6 +9,9 @@ const TrailerStyleProjectCard = ({ project }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isDetailView, setIsDetailView] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [details, setDetails] = useState(project.detailedInfo || null);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+  const [detailsError, setDetailsError] = useState(false);
 
   // Refs
   const cardRef = useRef(null);
@@ -53,11 +56,30 @@ const TrailerStyleProjectCard = ({ project }) => {
   };
   
   // Toggle detail view
+  const loadDetails = async () => {
+    if (details || !project.detailsId || isDetailsLoading) return;
+    setIsDetailsLoading(true);
+    setDetailsError(false);
+    try {
+      const module = await import('./data/projectDetails');
+      const loadedDetails = module.projectDetailsById?.[project.detailsId] || null;
+      if (loadedDetails) {
+        setDetails(loadedDetails);
+      }
+    } catch (error) {
+      setDetailsError(true);
+    } finally {
+      setIsDetailsLoading(false);
+    }
+  };
+
   const toggleDetailView = (e) => {
     e.stopPropagation();
-    setIsDetailView(!isDetailView);
-    if (!isDetailView) {
+    const willOpen = !isDetailView;
+    setIsDetailView(willOpen);
+    if (willOpen) {
       document.body.style.overflow = 'hidden'; // Prevent scrolling when detail view is open
+      loadDetails();
     } else {
       document.body.style.overflow = ''; // Re-enable scrolling
     }
@@ -167,6 +189,7 @@ const TrailerStyleProjectCard = ({ project }) => {
                   ref={videoRef}
                   className="w-full h-full object-cover"
                   src={project.demoVideo}
+                  preload="metadata"
                   muted={isMuted}
                   loop={project.loop !== false}
                   playsInline
@@ -205,6 +228,8 @@ const TrailerStyleProjectCard = ({ project }) => {
                 src={project.image} 
                 alt={project.title}
                 className="w-full h-full object-cover transition-all duration-500"
+                loading="lazy"
+                decoding="async"
               />
             )}
             
@@ -350,29 +375,44 @@ const TrailerStyleProjectCard = ({ project }) => {
               </div>
             </div>
 
-            {/* Detailed Information - Only show if available */}
-            {project.detailedInfo && (
+            {/* Detailed Information */}
+            {isDetailsLoading && (
+              <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl border border-gray-200 dark:border-gray-700">
+                <p className="text-lg text-gray-700 dark:text-gray-300">Loading detailed write-up...</p>
+              </div>
+            )}
+            {detailsError && !isDetailsLoading && !details && (
+              <div className="bg-red-50 dark:bg-red-900/20 p-8 rounded-xl border border-red-200 dark:border-red-700">
+                <p className="text-lg text-red-700 dark:text-red-300">Unable to load details right now. Please try again later.</p>
+              </div>
+            )}
+            {!isDetailsLoading && !details && !detailsError && (
+              <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl border border-gray-200 dark:border-gray-700">
+                <p className="text-lg text-gray-700 dark:text-gray-300">Detailed write-up coming soon.</p>
+              </div>
+            )}
+            {!isDetailsLoading && details && (
               <div className="space-y-12">
                 {/* Objective */}
-                {project.detailedInfo.objective && (
+                {details.objective && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-xl border-l-4 border-blue-500">
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Objective</h3>
-                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">{project.detailedInfo.objective}</p>
+                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">{details.objective}</p>
                   </div>
                 )}
 
                 {/* Dataset Information */}
-                {project.detailedInfo.dataset && (
+                {details.dataset && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Dataset</h3>
                     <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl space-y-6">
-                      <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">{project.detailedInfo.dataset.description}</p>
+                      <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">{details.dataset.description}</p>
 
-                      {project.detailedInfo.dataset.features && (
+                      {details.dataset.features && (
                         <div>
                           <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Key Features</h4>
                           <div className="flex flex-wrap gap-3">
-                            {project.detailedInfo.dataset.features.map((feature, i) => (
+                            {details.dataset.features.map((feature, i) => (
                               <span key={i} className="px-4 py-2 text-base bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-300 dark:border-gray-600">
                                 {feature}
                               </span>
@@ -381,11 +421,11 @@ const TrailerStyleProjectCard = ({ project }) => {
                         </div>
                       )}
 
-                      {project.detailedInfo.dataset.preprocessing && (
+                      {details.dataset.preprocessing && (
                         <div>
                           <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Preprocessing Steps</h4>
                           <ul className="space-y-3">
-                            {project.detailedInfo.dataset.preprocessing.map((step, i) => (
+                            {details.dataset.preprocessing.map((step, i) => (
                               <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                                 <span className="text-primary dark:text-tertiary mr-3 mt-1 text-xl">•</span>
                                 <span>{step}</span>
@@ -399,11 +439,11 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Methodology */}
-                {project.detailedInfo.methodology && (
+                {details.methodology && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Methodology</h3>
                     <div className="grid gap-6">
-                      {project.detailedInfo.methodology.map((method, i) => (
+                      {details.methodology.map((method, i) => (
                         <div key={i} className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-8 rounded-xl border border-gray-200 dark:border-gray-600">
                           <h4 className="text-2xl font-bold text-primary dark:text-tertiary mb-5">{method.algorithm}</h4>
                           <div className="space-y-4 text-lg">
@@ -437,12 +477,12 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Key Findings */}
-                {project.detailedInfo.keyFindings && (
+                {details.keyFindings && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Key Findings</h3>
                     <div className="bg-yellow-50 dark:bg-yellow-900/20 p-8 rounded-xl border-l-4 border-yellow-500">
                       <ul className="space-y-4">
-                        {project.detailedInfo.keyFindings.map((finding, i) => (
+                        {details.keyFindings.map((finding, i) => (
                           <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                             <span className="text-yellow-600 dark:text-yellow-400 mr-4 mt-1 text-2xl">★</span>
                             <span>{finding}</span>
@@ -454,15 +494,15 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Results */}
-                {project.detailedInfo.results && (
+                {details.results && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Results</h3>
                     <div className="bg-green-50 dark:bg-green-900/20 p-8 rounded-xl border-l-4 border-green-500 space-y-6">
-                      {project.detailedInfo.results.bestModels && (
+                      {details.results.bestModels && (
                         <div>
                           <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Best Performing Models</h4>
                           <div className="flex flex-wrap gap-3">
-                            {project.detailedInfo.results.bestModels.map((model, i) => (
+                            {details.results.bestModels.map((model, i) => (
                               <span key={i} className="px-5 py-3 text-lg bg-green-600 dark:bg-green-700 text-white rounded-lg font-semibold shadow-md">
                                 {model}
                               </span>
@@ -470,9 +510,9 @@ const TrailerStyleProjectCard = ({ project }) => {
                           </div>
                         </div>
                       )}
-                      {project.detailedInfo.results.metrics && (
+                      {details.results.metrics && (
                         <ul className="space-y-3">
-                          {project.detailedInfo.results.metrics.map((metric, i) => (
+                          {details.results.metrics.map((metric, i) => (
                             <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                               <span className="text-green-600 dark:text-green-400 mr-3 mt-1 text-xl">✓</span>
                               <span>{metric}</span>
@@ -485,12 +525,12 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Challenges */}
-                {project.detailedInfo.challenges && (
+                {details.challenges && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Challenges</h3>
                     <div className="bg-orange-50 dark:bg-orange-900/20 p-8 rounded-xl border-l-4 border-orange-500">
                       <ul className="space-y-4">
-                        {project.detailedInfo.challenges.map((challenge, i) => (
+                        {details.challenges.map((challenge, i) => (
                           <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                             <span className="text-orange-600 dark:text-orange-400 mr-4 mt-1 text-xl">⚠</span>
                             <span>{challenge}</span>
@@ -502,12 +542,12 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Insights */}
-                {project.detailedInfo.insights && (
+                {details.insights && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Insights</h3>
                     <div className="bg-purple-50 dark:bg-purple-900/20 p-8 rounded-xl border-l-4 border-purple-500">
                       <ul className="space-y-4">
-                        {project.detailedInfo.insights.map((insight, i) => (
+                        {details.insights.map((insight, i) => (
                           <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                             <span className="text-purple-600 dark:text-purple-400 mr-4 mt-1 text-xl">💡</span>
                             <span>{insight}</span>
@@ -519,12 +559,12 @@ const TrailerStyleProjectCard = ({ project }) => {
                 )}
 
                 {/* Future Work */}
-                {project.detailedInfo.futureWork && (
+                {details.futureWork && (
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-5">Future Work</h3>
                     <div className="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-xl border-l-4 border-indigo-500">
                       <ul className="space-y-4">
-                        {project.detailedInfo.futureWork.map((work, i) => (
+                        {details.futureWork.map((work, i) => (
                           <li key={i} className="flex items-start text-lg text-gray-700 dark:text-gray-300">
                             <span className="text-indigo-600 dark:text-indigo-400 mr-4 mt-1 text-xl">→</span>
                             <span>{work}</span>

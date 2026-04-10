@@ -8,6 +8,9 @@
 # Production build
 /dist
 
+# Claude Code
+CLAUDE.md
+
 # Misc
 .DS_Store
 .env
