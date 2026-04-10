@@ -5,7 +5,7 @@ import useScrollReveal from '../../hooks/useScrollReveal';
 const AboutSection = ({ yearsOfExperience }) => {
   const displayYears = yearsOfExperience ? `${yearsOfExperience}+` : '4+';
   const { ref: imgRef, isVisible: imgVisible } = useScrollReveal();
-  const { ref: textRef, isVisible: textVisible } = useScrollReveal({ rootMargin: '0px 0px -30px 0px' });
+  const { ref: textRef } = useScrollReveal({ rootMargin: '0px 0px -30px 0px' });
 
   return (
     <section id="about" className="py-20 relative">
